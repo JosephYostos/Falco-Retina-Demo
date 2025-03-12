@@ -23,5 +23,29 @@ curl https://raw.githubusercontent.com/xxradar/k8s-calico-oss-install-containerd
 ```
 
 ## Installing Falco + Talon
+```
+helm search repo falcosecurity/falco-talon
+```
+
+
 
 ## Installing Retina
+Basic Mode (with Capture Support) <br/>
+```https://retina.sh/docs/Installation/Setup#basic-mode-with-capture-support```
+
+```
+VERSION=$( curl -sL https://api.github.com/repos/microsoft/retina/releases/latest | jq -r .name)
+helm upgrade --install retina oci://ghcr.io/microsoft/retina/charts/retina \
+    --version $VERSION \
+    --namespace kube-system \
+    --set image.tag=$VERSION \
+    --set operator.tag=$VERSION \
+    --set logLevel=info \
+    --set image.pullPolicy=Always \
+    --set logLevel=info \
+    --set os.windows=true \
+    --set operator.enabled=true \
+    --set operator.enableRetinaEndpoint=true \
+    --skip-crds \
+    --set enabledPlugin_linux="\[dropreason\,packetforward\,linuxutil\,dns\,packetparser\]"
+```
