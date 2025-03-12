@@ -25,11 +25,6 @@ Manually remove the taints:
 kubectl taint nodes ip-10-0-14-237 disk-pressure=true:NoSchedule-
 ```
 
-Check that the Falco pod is running successfully:
-```
-kubectl describe pod falco-9bkkf -n falco
-```
-
 We are going to install ```Cilium``` as our CNI of choice to ensure networking on the cluster
 ```
 curl https://raw.githubusercontent.com/xxradar/k8s-calico-oss-install-containerd/refs/heads/main/cilium_install.sh | bash
@@ -63,6 +58,11 @@ helm install falco falcosecurity/falco --namespace falco \
   --set tty=true \
   --set falcosidekick.enabled=true \
   --set falcosidekick.config.talon.address=http://falco-talon:2803
+```
+
+Check that the Falco pod is running successfully:
+```
+kubectl describe pod falco-9bkkf -n falco
 ```
 
 ### Install Falco Talon
