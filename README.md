@@ -16,6 +16,14 @@ Simply remove the taints on our ```control plane``` node.
 ```
 kubectl taint node $(kubectl get nodes --selector='node-role.kubernetes.io/control-plane' -o jsonpath='{.items[0].metadata.name}') node-role.kubernetes.io/control-plane:NoSchedule-
 ```
+Check the taints on your node:
+```
+kubectl describe node ip-10-0-14-237 | grep "Taints"
+```
+Manually remove the taints:
+```
+kubectl taint nodes ip-10-0-14-237 disk-pressure=true:NoSchedule-
+```
 
 We are going to install ```Cilium``` as our CNI of choice to ensure networking on the cluster
 ```
