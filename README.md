@@ -3,7 +3,7 @@ Quick Demo of Falco Talon + Retina Response Actions
 
 ## Setting up the Kubernetes cluster
 
-On an ```Ubuntu 20.04``` EC2 instance, we will install the containerD runtime components:
+On an ```Ubuntu 20.04``` (```t3.xlarge```) EC2 instance, we will install the containerD runtime components:
 ```
 curl https://raw.githubusercontent.com/xxradar/install_k8s_ubuntu/main/setup_latest.sh | bash
 ```
