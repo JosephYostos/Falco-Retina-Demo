@@ -1,0 +1,59 @@
+- action: Disable outbound connections
+  actionner: kubernetes:networkpolicy
+  parameters:
+    allow:
+      - "192.168.1.0/24"
+      - "172.17.0.0/16"
+      - "10.0.0.0/32"   
+
+- action: Terminate Pod
+  actionner: kubernetes:terminate 
+
+- action: Label Pod as Suspicious
+  actionner: kubernetes:label
+  parameters:
+    labels:
+      suspicious: "true"      
+
+- action: Annotate the pod
+  actionner: kubernetes:annotation
+  parameters:
+    level: pod
+    annotations:
+      retina.sh: observe # https://retina.sh/docs/Metrics/annotations
+
+- rule: Suspicious outbound connection
+  match:
+    rules:
+      - Outbound Connection to C2 Servers
+#      - Outbound Connection to Free.fr
+  actions:
+    - action: Disable outbound connections
+    - action: Terminate Pod
+      parameters:
+        grace_period_seconds: 0
+
+- rule: Detect outbound connections to common miner pool ports
+  match:
+    rules:
+      - Detect outbound connections to common miner pool ports
+  actions:
+    - action: Disable outbound connections
+
+- rule: Detect crypto miners using the Stratum protocol
+  match:
+    rules:
+      - Detect crypto miners using the Stratum protocol
+  actions:
+    - action: Terminate Pod
+      parameters:
+        grace_period_seconds: 10
+
+- rule: Terminal shell in container 
+  match:
+    rules:
+      - Terminal shell in container
+    output_fields:
+      - k8s.ns.name!=kube-system, k8s.ns.name!=falco
+  actions:
+    - action: Label Pod as Suspicious
