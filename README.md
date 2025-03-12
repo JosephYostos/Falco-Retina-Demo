@@ -51,10 +51,10 @@ git checkout tags/falco-talon-0.3.0
 cd charts/charts/falco-talon/
 ```
 
-Remove the existing rule and download (wget) our customized Falco Talon [rules.yaml](https://raw.githubusercontent.com/IgorEulalio/falco-workshops/refs/heads/main/talon/talon-rules.yml) file containing the Talon rules in response to specific Falco events:
+Remove the existing rule and download (wget) our customized Falco Talon [rules.yaml](https://github.com/NigelDouglas30/Falco-Retina-Demo/blob/main/talon-rules.yml) file containing the Talon rules in response to specific Falco events:
 ```
 rm rules.yaml
-wget -O rules.yaml https://raw.githubusercontent.com/IgorEulalio/falco-workshops/refs/heads/main/talon/talon-rules.yml
+wget -O rules.yaml https://raw.githubusercontent.com/NigelDouglas30/Falco-Retina-Demo/refs/heads/main/talon-rules.yml
 ```
 
 Now, we'll be deploying Falco Talon using the local chart, therefore Helm will use the rules file downloaded above as the official rules.
@@ -72,9 +72,11 @@ kubectl get pods -n falco -w | grep talon
 
 
 ## Installing Retina
-Basic Mode (with Capture Support) <br/>
+Advanced Mode with Local Context (with Capture support) <br/>
 ```https://retina.sh/docs/Installation/Setup#basic-mode-with-capture-support```
 
+Annotations let you specify which Pods to observe (create metrics for). <br/>
+To configure this, specify ```enableAnnotations=true``` in Retina's helm installation or ConfigMap.
 ```
 VERSION=$( curl -sL https://api.github.com/repos/microsoft/retina/releases/latest | jq -r .name)
 helm upgrade --install retina oci://ghcr.io/microsoft/retina/charts/retina \
@@ -82,15 +84,18 @@ helm upgrade --install retina oci://ghcr.io/microsoft/retina/charts/retina \
     --namespace kube-system \
     --set image.tag=$VERSION \
     --set operator.tag=$VERSION \
-    --set logLevel=info \
     --set image.pullPolicy=Always \
     --set logLevel=info \
     --set os.windows=true \
     --set operator.enabled=true \
     --set operator.enableRetinaEndpoint=true \
     --skip-crds \
-    --set enabledPlugin_linux="\[dropreason\,packetforward\,linuxutil\,dns\,packetparser\]"
+    --set enabledPlugin_linux="\[dropreason\,packetforward\,linuxutil\,dns\,packetparser\]" \
+    --set enablePodLevel=true \
+    --set enableAnnotations=true
 ```
+
+An exception: currently all Pods in ```kube-system``` are always monitored.
 
 ## Test Process
 
