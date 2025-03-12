@@ -30,7 +30,7 @@ We are going to install ```Cilium``` as our CNI of choice to ensure networking o
 curl https://raw.githubusercontent.com/xxradar/k8s-calico-oss-install-containerd/refs/heads/main/cilium_install.sh | bash
 ```
 
-We will also need Helm for deploying all of these components:
+We will also need to install [Helm for Ubuntu](https://helm.sh/docs/intro/install/#from-apt-debianubuntu) for deploying all of these components:
 ```
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
 sudo apt-get install apt-transport-https --yes
