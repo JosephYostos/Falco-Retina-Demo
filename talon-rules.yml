@@ -56,4 +56,4 @@
     output_fields:
       - k8s.ns.name!=kube-system, k8s.ns.name!=falco
   actions:
-    - action: Label Pod as Suspicious
+    - action: Annotate the pod
