@@ -39,6 +39,7 @@
       - Detect outbound connections to common miner pool ports
   actions:
     - action: Disable outbound connections
+    - action: Annotate the pod
 
 - rule: Detect crypto miners using the Stratum protocol
   match:
@@ -56,4 +57,4 @@
     output_fields:
       - k8s.ns.name!=kube-system, k8s.ns.name!=falco
   actions:
-    - action: Annotate the pod
+    - action: Label Pod as Suspicious
