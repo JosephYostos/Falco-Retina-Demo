@@ -141,3 +141,20 @@ kubectl get events -n default -w
 ```
 kubectl logs -l app.kubernetes.io/name=falco -n falco -c falco -f | grep -E "xmrig|mitre"
 ```
+
+Download the ```xmrig``` mining package from the official Github project:
+```
+curl -OL https://github.com/xmrig/xmrig/releases/download/v6.16.4/xmrig-6.16.4-linux-static-x64.tar.gz
+```
+Unzipping the mining binary package
+```
+tar -xvf xmrig-6.16.4-linux-static-x64.tar.gz
+```
+Changing directory to the newly-downloaded miner folder
+```
+cd xmrig-6.16.4
+```
+Run the miner with the malicious known cruptomining FQDN and port number that would be flagged by Falco:
+```
+./xmrig --donate-level 8 -o xmr-us-east1.nanopool.org:14433 -u 422skia35WvF9mVq9Z9oCMRtoEunYQ5kHPvRqpH1rGCv1BzD5dUY4cD8wiCMp4KQEYLAN1BuawbUEJE99SNrTv9N9gf2TWC --tls --coin monero
+```
