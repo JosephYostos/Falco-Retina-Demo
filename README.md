@@ -121,7 +121,8 @@ An exception: currently all Pods in ```kube-system``` are always monitored.
 
 ## Test Process
 
-Creat workload
+Deploy client/server application
+
 ```
 kubectl apply -f https://raw.githubusercontent.com/JosephYostos/Falco-Retina-Demo/refs/heads/main/demo-manifests.yaml
 ```
