@@ -57,10 +57,7 @@ helm install falco falcosecurity/falco --namespace falco \
   --create-namespace \
   --set tty=true \
   --set falcosidekick.enabled=true \
-  --set falcosidekick.config.talon.address=http://falco-talon:2803 \
-  --set "falcoctl.config.artifact.install.refs={falco-rules:3,falco-incubating-rules:4,falco-sandbox-rules:4}" \
-  --set "falcoctl.config.artifact.follow.refs={falco-rules:3,falco-incubating-rules:4,falco-sandbox-rules:4}" \
-  --set "falco.rules_files={/etc/falco/k8s_audit_rules.yaml,/etc/falco/rules.d,/etc/falco/falco_rules.yaml,/etc/falco/falco-incubating_rules.yaml,/etc/falco/falco-sandbox_rules.yaml}"
+  --set falcosidekick.config.talon.address=http://falco-talon:2803
 ```
 
 Check that the Falco pod is running successfully:
