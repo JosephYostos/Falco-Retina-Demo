@@ -119,7 +119,7 @@ helm upgrade --install retina oci://ghcr.io/microsoft/retina/charts/retina \
 
 An exception: currently all Pods in ```kube-system``` are always monitored.
 
-## Test Process
+## Falco test Process
 
 Deploy client/server application
 
@@ -131,7 +131,6 @@ Check labels, annotation, and networkpolicy
 ```
 kubectl get pod tcp-client-0  --show-labels
 kubectl describe pod tcp-client-0  | grep Annotation
-kubectl get networkpolicy
 ```
 Access the client pod 
 
@@ -144,42 +143,57 @@ check logs
 kubectl logs -n falco -l app.kubernetes.io/instance=falco-talon --max-log-requests=10
 ```
 
-## Test Process
+## Retina test Process
 
-Create an Ubuntu test workload
-```
-kubectl apply -f https://raw.githubusercontent.com/nigel-falco/oss-security-workshop/main/k03-rbac/ubuntu-pod.yaml
-```
+portforward grafana, prometheus and hubble relay  
 
 ```
-kubectl exec -it $(kubectl get pods -l app=ubuntu -o jsonpath='{.items[0].metadata.name}') -- /bin/bash
+kubectl port-forward --namespace kube-system svc/prometheus-operated 9090
 ```
+```
+kubectl port-forward --namespace kube-system  svc/prometheus-grafana 8080:80
+```
+```
+kubectl port-forward -n kube-system pod/$(kubectl get pod -n kube-system -l k8s-app=hubble-relay -o jsonpath="{.items[0].metadata.name}") 4245
+```
+Check the created iptable rule
+```
+kubectl exec -it tcp-client-0 -- iptables -L --line-numbers
+```
+Check flow logs with hubble
 
 ```
-kubectl logs -n falco -l app.kubernetes.io/instance=falco-talon --max-log-requests=10
+hubble observe --follow --to-pod default/tcp-client-0
+```
+Get Grafana password
+```
+kubectl get secret -n kube-system prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
 
+Access graphana dashboard
 ```
-kubectl get events -n default -w
-```
-
-```
-kubectl logs -l app.kubernetes.io/name=falco -n falco -c falco -f | grep -E "xmrig|mitre"
+http://localhost:8080
 ```
 
-Download the ```xmrig``` mining package from the official Github project:
+## Packet capture scenario
+
+Retina Capture allows users to capture network traffic/metadata for specified Nodes/Pods.
+
+Prerequisite: [Install Retina CLI](https://retina.sh/docs/Installation/CLI)
+
+This example captures network traffic of pod 'app=tcp-client-0' for duration 15 seconds.
+
 ```
-curl -OL https://github.com/xmrig/xmrig/releases/download/v6.16.4/xmrig-6.16.4-linux-static-x64.tar.gz
+kubectl retina capture create \
+        --host-path /tmp/retina-capture \
+        --pod-selectors="app=tcp-client-0" \
+        --duration 15s -n default
 ```
-Unzipping the mining binary package
+
+Copy capture file to local machine
+
 ```
-tar -xvf xmrig-6.16.4-linux-static-x64.tar.gz
+kubectl cp default/tcp-client-0:/host/tmp/retina-capture ./retina-capture
 ```
-Changing directory to the newly-downloaded miner folder
-```
-cd xmrig-6.16.4
-```
-Run the miner with the malicious known cruptomining FQDN and port number that would be flagged by Falco:
-```
-./xmrig --donate-level 8 -o xmr-us-east1.nanopool.org:14433 -u 422skia35WvF9mVq9Z9oCMRtoEunYQ5kHPvRqpH1rGCv1BzD5dUY4cD8wiCMp4KQEYLAN1BuawbUEJE99SNrTv9N9gf2TWC --tls --coin monero
-```
+
+Untar the file on localmachine and analyze capture file with Wireshark
