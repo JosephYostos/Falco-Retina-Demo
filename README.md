@@ -120,8 +120,28 @@ helm upgrade --install retina oci://ghcr.io/microsoft/retina/charts/retina \
 An exception: currently all Pods in ```kube-system``` are always monitored.
 
 ## Test Process
-creat workload
 
+Creat workload
+```
+kubectl apply -f https://raw.githubusercontent.com/JosephYostos/Falco-Retina-Demo/refs/heads/main/demo-manifests.yaml
+```
+
+Check labels, annotation, and networkpolicy
+```
+kubectl get pod tcp-client-0  --show-labels
+kubectl describe pod tcp-client-0  | grep Annotation
+kubectl get networkpolicy
+```
+Access the client pod 
+
+```
+kubectl exec -it tcp-client-0 -- sh
+```
+
+check logs
+```
+kubectl logs -n falco -l app.kubernetes.io/instance=falco-talon --max-log-requests=10
+```
 
 ## Test Process
 
