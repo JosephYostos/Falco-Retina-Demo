@@ -62,7 +62,7 @@ helm install falco falcosecurity/falco --namespace falco \
 
 Check that the Falco pod is running successfully:
 ```
-kubectl describe pod falco-9bkkf -n falco
+kubectl get pod -n falco
 ```
 
 ### Install Falco Talon
@@ -118,6 +118,10 @@ helm upgrade --install retina oci://ghcr.io/microsoft/retina/charts/retina \
 ```
 
 An exception: currently all Pods in ```kube-system``` are always monitored.
+
+## Test Process
+creat workload
+
 
 ## Test Process
 
