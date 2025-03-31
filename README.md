@@ -131,6 +131,7 @@ Check labels, annotation, and networkpolicy
 ```
 kubectl get pod tcp-client-0  --show-labels
 kubectl describe pod tcp-client-0  | grep Annotation
+kubectl exec -it tcp-client-0 -- iptables -L --line-numbers
 ```
 Access the client pod 
 
